@@ -1,6 +1,6 @@
 <?php
+$conn = new mysqli('localHost',  'root',  '', 'senairatingsystem');
     if(isset($_POST['save'])) {
-        $conn = new mysqli('localHost',  'root',  '', 'senairatingsystem');
 
         $uID = $conn -> real_escape_string($_POST['uID']);
         $rateIndex =$conn -> real_escape_string($_POST['rateIndex']);
@@ -16,6 +16,13 @@
             exit(json_encode(array('id' => $uID)));
         }
     }
+    $sql = $conn->query("SELECT id FROM stars");
+    $numR = $sql->num_rows;
+
+    $sql = $conn->query("SELECT SUM(rateIndex) as total FROM stars");
+    $rData = $sql->fetch_array();
+    $total = $rData['total'];
+    $avg = $total / $numR
 ?>
 
 
@@ -29,12 +36,14 @@
     <title>Rating system</title>
 </head>
 <body>
-    <div  align="center" style="background-color: #000; padding: 50px">
+    <div  align="center" style="background-color: #000; padding: 50px; color:white">
         <i class="fa fa-star fa-2x" data-index="0" ></i>
         <i class="fa fa-star fa-2x" data-index="1" ></i>
         <i class="fa fa-star fa-2x" data-index="2" ></i>
         <i class="fa fa-star fa-2x" data-index="3" ></i>
         <i class="fa fa-star fa-2x" data-index="4" ></i>
+        <br><br>
+        <?php echo round($avg, 1);  ?>
     </div>
 
 
