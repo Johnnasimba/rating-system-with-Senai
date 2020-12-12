@@ -6,7 +6,7 @@
         $rateIndex =$conn -> real_escape_string($_POST['rateIndex']);
         $rateIndex++; 
 
-        if($uID === 0) {
+        if(!$uID) {
             $conn->query("INSERT INTO stars (rateIndex) VALUES ('$rateIndex')");
             $sql = $conn->query("SELECT id FROM stars ORDER BY id DESC LIMIT 1");
             $uData = $sql->fetch_assoc();
@@ -48,8 +48,11 @@
      $(document).ready(function ( ) {
             resetStarColors();
 
-            if(localStorage.getItem('rateIndex') != null)
+            if(localStorage.getItem('rateIndex') != null){
+
             setStars(parseInt(localStorage.getItem('rateIndex')));
+            uID = localStorage.getItem('uID');
+            }
 
         star.on('click', function() {
             rateIndex = parseInt($(this).data('index'));
@@ -66,21 +69,23 @@
             resetStarColors();
             if(rateIndex != -1)
             setStars(rateIndex);
-         })
+         });
+     });
          function saveToTheDB() {
              $.ajax({
-                 url: 'index.php',
+                 url: "index.php",
                  method: "POST",
                  dataType: "json",
                  data: {
                      save: 1,
-                     uID:uID,
+                     uID: uID,
                      rateIndex: rateIndex
                  }, success : function(res) {
-                    uID = res.uid;
+                    uID = res.id;
+                    localStorage.setItem('uID', uID )
                  }
 
-             })
+             });
          }
 
 
@@ -94,7 +99,7 @@
              star.css('color', 'white')
          }
         
-     })
+   
  </script>
 </body>
 </html>
